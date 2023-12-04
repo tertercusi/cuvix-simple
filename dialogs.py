@@ -31,11 +31,11 @@ class PostFrame(Labelframe):
 
         self.username = username
 
-        self.username_link = Button(self, text=username, bootstyle=(LINK, INFO), command=self.show_profile)
-        self.username_link.pack(side=TOP, padx=3, pady=3)
+        self.username_link = Button(self, text=f'@{username}', bootstyle=(LINK, INFO), command=self.show_profile)
+        self.username_link.pack(side=TOP, anchor=W)
 
         self.message = Label(self, text=content)
-        self.message.pack(side=TOP, padx=3, pady=3, fill=X)
+        self.message.pack(side=TOP, padx=10, pady=3, fill=X)
 
     def show_profile(self):
         ProfileView(self, self.username)
@@ -51,7 +51,7 @@ class NewPostDialog(Toplevel):
         self.columnconfigure(0, weight=1)
 
         self.lbl = Label(self, text='Create a post')
-        self.lbl.grid(row=0, column=0)
+        self.lbl.grid(row=0, column=0, sticky=W)
 
         self.fld = Text(self)
         self.fld.grid(row=1, column=0, columnspan=2, sticky=(N, W, E, S))
@@ -59,8 +59,41 @@ class NewPostDialog(Toplevel):
         self.post_btn = Button(self, text='Post', command=self.commit)
         self.post_btn.grid(row=2, column=1, sticky=E)
 
+        for child in self.winfo_children():
+            child.grid_configure(padx=5, pady=5)
+
     def commit(self):
         from models import Post
         post = Post(content=self.fld.get('1.0', END), created_at=datetime.now(), posted_by=self.poster)
         post.save()
+        self.destroy()
+
+
+class AddUserDialog(Toplevel):
+    def __init__(self):
+        super().__init__()
+        self.title('Sign Up')
+        self.resizable(width=False, height=False)
+
+        self.usr_lbl = Label(self, text='Username')
+        self.usr_lbl.grid(row=0, column=0)
+
+        self.username = StringVar()
+        self.usr_fld = Entry(self, textvariable=self.username)
+        self.usr_fld.grid(row=0, column=1)
+
+        self.pass_lbl = Label(self, text='Password')
+        self.pass_lbl.grid(row=1, column=0)
+
+        self.password = StringVar()
+        self.pass_fld = Entry(self, textvariable=self.password, show='*')
+        self.pass_fld.grid(row=1, column=1)
+
+        self.signup_btn = Button(self, text='Sign Up', command=self.signup)
+        self.signup_btn.grid(row=2, column=0, columnspan=2)
+
+    def signup(self):
+        from models import User
+        user = User(username=self.username.get(), created_at=datetime.now())
+        user.save(force_insert=True)
         self.destroy()

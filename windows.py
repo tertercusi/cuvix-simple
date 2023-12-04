@@ -22,7 +22,7 @@ class NewsFeed(Window):
         self.show_profile_btn.grid(column=0, row=1, sticky=(N, W, E))
 
         self.add_user_btn = Button(self)
-        self.add_user_btn.config(text='Add User...', bootstyle=SECONDARY)
+        self.add_user_btn.config(text='Add User...', bootstyle=SECONDARY, command=self.add_new_user)
         self.add_user_btn.grid(column=0, row=2, sticky=(N, W, E))
 
         self.refresh_btn = Button(self)
@@ -45,7 +45,6 @@ class NewsFeed(Window):
         self.feed.grid(column=1, row=0, rowspan=4, columnspan=2, padx=(10, 0), pady=1, sticky=(N, W, E, S))
 
         self.refresh_feed()
-        self.bind('<FocusIn>', self.refresh_feed)
 
     def refresh_feed(self, *args):
         for child in self.feed.winfo_children():
@@ -62,6 +61,10 @@ class NewsFeed(Window):
     def new_post(self):
         from dialogs import NewPostDialog
         d = NewPostDialog(self.current_user.get())
+
+    def add_new_user(self):
+        from dialogs import AddUserDialog
+        d = AddUserDialog()
 
 
 if __name__ == '__main__':
