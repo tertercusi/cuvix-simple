@@ -1,0 +1,24 @@
+from peewee import *
+
+db = SqliteDatabase('data.db')
+
+
+class User(Model):
+    username = CharField(max_length=64, unique=True, primary_key=True)
+    created_at = DateTimeField()
+
+    class Meta:
+        database = db
+
+
+class Post(Model):
+    content = TextField()
+    created_at = DateTimeField()
+    posted_by = ForeignKeyField(User)
+
+    class Meta:
+        database = db
+
+
+db.connect()
+db.create_tables([User, Post])
