@@ -1,7 +1,7 @@
 from ttkbootstrap import *
 from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import ScrolledFrame
-
+from ttkbootstrap.dialogs.dialogs import Messagebox
 
 class NewsFeed(Window):
     def __init__(self):
@@ -10,7 +10,7 @@ class NewsFeed(Window):
         self.rowconfigure(0, weight=1)
         self.geometry('850x400')
 
-        self.current_user = StringVar(value='cusidawgs')
+        self.current_user = StringVar(value=None)
         self.status = StringVar(value='Ready.')
 
         self.new_post_btn = Button(self)
@@ -34,7 +34,7 @@ class NewsFeed(Window):
         self.current_user_lbl.grid(column=0, row=4, sticky=E)
 
         self.switch_user_btn = Button(self)
-        self.switch_user_btn.config(text='Switch User...', bootstyle=(LINK))
+        self.switch_user_btn.config(text='Switch User...', bootstyle=(LINK), command=self.switch_usr)
         self.switch_user_btn.grid(column=1, row=4, sticky=W)
 
         self.status_bar = Label(self)
@@ -44,6 +44,7 @@ class NewsFeed(Window):
         self.feed = ScrolledFrame(self)
         self.feed.grid(column=1, row=0, rowspan=4, columnspan=2, padx=(10, 0), pady=1, sticky=(N, W, E, S))
 
+        self.switch_usr()
         self.refresh_feed()
 
     def refresh_feed(self, *args):
@@ -54,17 +55,25 @@ class NewsFeed(Window):
         from dialogs import PostFrame
         for post in Post.select().order_by(Post.created_at.desc()):
             frame = PostFrame(self.feed, username=post.posted_by, content=post.content, date=post.created_at)
-            frame.pack(side=TOP, fill=X)
+            frame.pack(side=TOP, fill=X, padx=(5,20))
 
         self.status.set('Feed refreshed')
 
     def new_post(self):
+        if not self.current_user.get():
+            Messagebox.show_error('Must be logged in.')
+            return
+
         from dialogs import NewPostDialog
         d = NewPostDialog(self.current_user.get())
 
     def add_new_user(self):
         from dialogs import AddUserDialog
         d = AddUserDialog()
+
+    def switch_usr(self):
+        from dialogs import SwitchUserDialog
+        d = SwitchUserDialog(self.current_user)
 
 
 if __name__ == '__main__':

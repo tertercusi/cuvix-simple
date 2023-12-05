@@ -4,7 +4,7 @@ db = SqliteDatabase('data.db')
 
 
 class User(Model):
-    username = PrimaryKeyField()
+    username = CharField(max_length=64, primary_key=True)
     created_at = DateTimeField()
 
     class Meta:
