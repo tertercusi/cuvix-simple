@@ -18,7 +18,7 @@ class NewsFeed(Window):
         self.new_post_btn.grid(column=0, row=0, sticky=(N, W, E), pady=(1, 20))
 
         self.show_profile_btn = Button(self)
-        self.show_profile_btn.config(text='Show Profile...', bootstyle=SECONDARY)
+        self.show_profile_btn.config(text='Show Profile...', bootstyle=SECONDARY, command=self.show_profile)
         self.show_profile_btn.grid(column=0, row=1, sticky=(N, W, E))
 
         self.add_user_btn = Button(self)
@@ -74,6 +74,10 @@ class NewsFeed(Window):
     def switch_usr(self):
         from dialogs import SwitchUserDialog
         d = SwitchUserDialog(self.current_user)
+
+    def show_profile(self):
+        from dialogs import SearchProfileDialog
+        SearchProfileDialog()
 
 
 if __name__ == '__main__':

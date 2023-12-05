@@ -22,7 +22,7 @@ class ProfileView(Toplevel):
         from models import Post
         for p in Post.select().where(Post.posted_by == profile_name).order_by(Post.created_at.desc()):
             post = PostFrame(self.feed, username=p.posted_by, date=p.created_at, content=p.content)
-            post.pack(side=TOP, fill=X)
+            post.pack(side=TOP, fill=X, padx=(5, 20))
 
 
 class PostFrame(Labelframe):
@@ -141,3 +141,32 @@ class SwitchUserDialog(Toplevel):
             self.destroy()
         except:
             Messagebox.show_error('Wrong credentials!')
+
+
+class SearchProfileDialog(Toplevel):
+    def __init__(self):
+        super().__init__()
+        self.title('Search Profile')
+
+        Label(self, text='Profile:').pack(side=LEFT)
+
+        self.profile = StringVar()
+        Entry(self, textvariable=self.profile).pack(side=LEFT)
+
+        Button(self, text='Search', bootstyle=PRIMARY, command=self.search).pack(side=LEFT)
+
+        for child in self.winfo_children():
+            child.pack_configure(padx=5, pady=5)
+        
+    def search(self):
+        from models import User
+
+        username = self.profile.get()
+        try:
+            User.get(username=username)
+            ProfileView(self, profile_name=username)
+            self.destroy()
+        except:
+            Messagebox.show_error('User not found.')
+
+    
