@@ -104,9 +104,12 @@ class AddUserDialog(Toplevel):
 
     def signup(self):
         from models import User
-        user = User(username=self.username.get(), password=self.password.get(), created_at=datetime.now())
-        user.save(force_insert=True)
-        self.destroy()
+        try:
+            user = User(username=self.username.get(), password=self.password.get(), created_at=datetime.now())
+            user.save(force_insert=True)
+            self.destroy()
+        except:
+            Messagebox.show_error('User already exists!')
 
 class SwitchUserDialog(Toplevel):
     def __init__(self, user_var):
@@ -131,7 +134,10 @@ class SwitchUserDialog(Toplevel):
         pass_ent.grid(row=1, column=1)
 
         login_btn = Button(self, text='Login', command=self.login)
-        login_btn.grid(row=2, column=1)
+        login_btn.grid(row=2, column=0, columnspan=2, sticky=EW)
+
+        for child in self.winfo_children():
+            child.grid_configure(padx=5, pady=5)
 
     def login(self):
         username = self.user_fld.get()
