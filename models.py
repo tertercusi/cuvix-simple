@@ -1,7 +1,12 @@
 from peewee import *
 
-# db = SqliteDatabase('data.db')
-db = MySQLDatabase(database='cuvix', user='root', host='localhost')
+db = None
+try:
+    db = MySQLDatabase(database='cuvix', user='root', host='localhost')
+    db.connect()
+except:
+    db = SqliteDatabase('data.sqlite')
+
 
 class User(Model):
     username = CharField(max_length=64, primary_key=True)
@@ -21,5 +26,4 @@ class Post(Model):
         database = db
 
 # User.password.key = key_derivation_fn
-db.connect()
 db.create_tables([User, Post])
