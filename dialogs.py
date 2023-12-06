@@ -97,7 +97,10 @@ class AddUserDialog(Toplevel):
         self.pass_fld.grid(row=1, column=1)
 
         self.signup_btn = Button(self, text='Sign Up', command=self.signup)
-        self.signup_btn.grid(row=2, column=0, columnspan=2)
+        self.signup_btn.grid(row=2, column=0, columnspan=2, sticky=EW)
+
+        for child in self.winfo_children():
+            child.grid_configure(padx=5, pady=5)
 
     def signup(self):
         from models import User
@@ -163,7 +166,7 @@ class SearchProfileDialog(Toplevel):
 
         username = self.profile.get()
         try:
-            User.get(username=username)
+            User.get(User.username == username)
             ProfileView(self, profile_name=username)
             self.destroy()
         except:
