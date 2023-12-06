@@ -66,6 +66,7 @@ class NewsFeed(Window):
 
         from dialogs import NewPostDialog
         d = NewPostDialog(self.current_user.get())
+        d.bind('<Destroy>', self.refresh_feed, add=True)
 
     def add_new_user(self):
         from dialogs import AddUserDialog
