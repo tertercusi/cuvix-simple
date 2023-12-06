@@ -1,10 +1,11 @@
 from peewee import *
 
-db = SqliteDatabase('data.db')
-
+# db = SqliteDatabase('data.db')
+db = MySQLDatabase(database='cuvix', user='root', host='localhost')
 
 class User(Model):
     username = CharField(max_length=64, primary_key=True)
+    password = TextField()
     created_at = DateTimeField()
 
     class Meta:
@@ -19,6 +20,6 @@ class Post(Model):
     class Meta:
         database = db
 
-
+# User.password.key = key_derivation_fn
 db.connect()
 db.create_tables([User, Post])

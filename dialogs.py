@@ -104,7 +104,7 @@ class AddUserDialog(Toplevel):
 
     def signup(self):
         from models import User
-        user = User(username=self.username.get(), created_at=datetime.now())
+        user = User(username=self.username.get(), password=self.password.get(), created_at=datetime.now())
         user.save(force_insert=True)
         self.destroy()
 
@@ -135,11 +135,12 @@ class SwitchUserDialog(Toplevel):
 
     def login(self):
         username = self.user_fld.get()
+        password = self.pass_fld.get()
 
         from models import User
         
         try:
-            user = User.get(username=username)
+            user = User.get(User.username == username, User.password == password)
             self.user_var.set(username)
             self.destroy()
         except:
