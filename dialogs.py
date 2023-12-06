@@ -13,6 +13,11 @@ class ProfileView(Toplevel):
         self.profile_lbl = Label(self, text=profile_name, font=('', 16), justify=LEFT)
         self.profile_lbl.pack(side=TOP, fill=X, padx=(5, 20))
 
+        from models import User
+        user = User.get(User.username == profile_name)
+        date_joined = Label(self, text=f'Joined at {user.created_at}', font=('', 10), foreground='gray', justify=LEFT)
+        date_joined.pack(side=TOP, fill=X, padx=(5,0))
+
         self.feed = ScrolledFrame(self)
         self.feed.pack(side=TOP, expand=True, fill=BOTH)
 
