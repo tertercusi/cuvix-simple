@@ -3,6 +3,8 @@ from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import ScrolledFrame
 from ttkbootstrap.dialogs.dialogs import Messagebox
 
+from encryption import encrypt, decrypt
+
 class ProfileView(Toplevel):
     def __init__(self, master, profile_name):
         super().__init__(master, topmost=True)
@@ -110,7 +112,8 @@ class AddUserDialog(Toplevel):
     def signup(self):
         from models import User
         try:
-            user = User(username=self.username.get(), password=self.password.get(), created_at=datetime.now())
+            raw_password = self.password.get()
+            user = User(username=self.username.get(), password=encrypt(raw_password), created_at=datetime.now())
             user.save(force_insert=True)
             self.destroy()
         except:
@@ -151,9 +154,12 @@ class SwitchUserDialog(Toplevel):
         from models import User
         
         try:
-            user = User.get(User.username == username, User.password == password)
-            self.user_var.set(username)
-            self.destroy()
+            user = User.get(User.username == username)
+            if not decrypt(user.password) == password:
+                raise Exception
+            else:
+                self.user_var.set(username)
+                self.destroy()
         except:
             Messagebox.show_error('Wrong credentials!')
 
