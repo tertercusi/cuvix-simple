@@ -28,15 +28,16 @@ class ProfileView(Toplevel):
     def fill_feed(self, profile_name):
         from models import Post
         for p in Post.select().where(Post.posted_by == profile_name).order_by(Post.created_at.desc()):
-            post = PostFrame(self.feed, username=p.posted_by, date=p.created_at, content=p.content)
+            post = PostFrame(self.feed, username=p.posted_by, date=p.created_at, content=p.content, post_id=str(p))
             post.pack(side=TOP, fill=X, padx=(5, 20))
 
 
 class PostFrame(Labelframe):
-    def __init__(self, master, username, date, content):
+    def __init__(self, master, username, date, content, post_id=None):
         super().__init__(master, bootstyle=PRIMARY, text='')
 
         self.username = username
+        self.post_id = post_id
 
         head_frm = Frame(self)
 
@@ -44,7 +45,10 @@ class PostFrame(Labelframe):
         username_link.pack(side=LEFT, anchor=W)
 
         timestamp = Label(head_frm, text=f'at {date}', foreground='gray')
-        timestamp.pack(side=RIGHT, anchor=E, padx=(0,10))
+        timestamp.pack(side=LEFT, anchor=W, padx=(0,10))
+
+        delete_btn = Button(head_frm, text='Delete', bootstyle=(LINK, DANGER), command=self.delete)
+        delete_btn.pack(side=LEFT, anchor=W, padx=(0,10))
 
         head_frm.pack(side=TOP, anchor=W)
 
@@ -53,6 +57,11 @@ class PostFrame(Labelframe):
 
     def show_profile(self):
         ProfileView(self, self.username)
+
+    def delete(self):
+        from models import Post
+        Post.delete_by_id(self.post_id)
+        self.destroy()
 
 
 class NewPostDialog(Toplevel):

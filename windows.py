@@ -54,7 +54,7 @@ class NewsFeed(Window):
         from models import Post
         from dialogs import PostFrame
         for post in Post.select().order_by(Post.created_at.desc()):
-            frame = PostFrame(self.feed, username=post.posted_by, content=post.content, date=post.created_at)
+            frame = PostFrame(self.feed, username=post.posted_by, content=post.content, date=post.created_at, post_id=str(post))
             frame.pack(side=TOP, fill=X, padx=(5,20))
 
         self.status.set('Feed refreshed')
