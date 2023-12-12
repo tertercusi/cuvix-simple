@@ -29,9 +29,9 @@ class NewsFeed(Window):
         self.refresh_btn.config(text='Refresh Posts', bootstyle=SECONDARY, command=self.refresh_feed)
         self.refresh_btn.grid(column=0, row=3, sticky=(N, W, E))
 
-        self.current_user_lbl = Label(self)
-        self.current_user_lbl.config(textvariable=self.current_user)
-        self.current_user_lbl.grid(column=0, row=4, sticky=E)
+        self.current_usr_btn = Button(self)
+        self.current_usr_btn.config(textvariable=self.current_user, bootstyle=(LINK,PRIMARY), command=self.show_own_profile)
+        self.current_usr_btn.grid(column=0, row=4, sticky=EW)
 
         self.switch_user_btn = Button(self)
         self.switch_user_btn.config(text='Switch User...', bootstyle=(LINK), command=self.switch_usr)
@@ -79,6 +79,10 @@ class NewsFeed(Window):
     def show_profile(self):
         from dialogs import SearchProfileDialog
         SearchProfileDialog()
+
+    def show_own_profile(self):
+        from dialogs import ProfileView
+        ProfileView(self, self.current_user.get())
 
 
 if __name__ == '__main__':
