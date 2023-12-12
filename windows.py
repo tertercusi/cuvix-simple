@@ -37,10 +37,6 @@ class NewsFeed(Window):
         self.switch_user_btn.config(text='Switch User...', bootstyle=(LINK), command=self.switch_usr)
         self.switch_user_btn.grid(column=1, row=4, sticky=W)
 
-        self.status_bar = Label(self)
-        self.status_bar.config(textvariable=self.status)
-        self.status_bar.grid(column=2, row=4, sticky=E)
-
         self.feed = ScrolledFrame(self)
         self.feed.grid(column=1, row=0, rowspan=4, columnspan=2, padx=(10, 0), pady=1, sticky=(N, W, E, S))
 
@@ -56,8 +52,6 @@ class NewsFeed(Window):
         for post in Post.select().order_by(Post.created_at.desc()):
             frame = PostFrame(self.feed, username=post.posted_by, content=post.content, date=post.created_at, post_id=str(post))
             frame.pack(side=TOP, fill=X, padx=(5,20))
-
-        self.status.set('Feed refreshed')
 
     def new_post(self):
         if not self.current_user.get():
