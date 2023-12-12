@@ -47,12 +47,16 @@ class PostFrame(Labelframe):
         timestamp = Label(head_frm, text=f'at {date}', foreground='gray')
         timestamp.pack(side=LEFT, anchor=W, padx=(0,10))
 
+        edit_btn = Button(head_frm, text='Edit', bootstyle=(LINK, INFO), command=self.edit)
+        edit_btn.pack(side=LEFT, anchor=W, padx=(0,10))
+
         delete_btn = Button(head_frm, text='Delete', bootstyle=(LINK, DANGER), command=self.delete)
         delete_btn.pack(side=LEFT, anchor=W, padx=(0,10))
 
         head_frm.pack(side=TOP, anchor=W)
 
-        message = Label(self, text=content)
+        self.content = StringVar(value=content)
+        message = Label(self, textvariable=self.content)
         message.pack(side=BOTTOM, padx=10, pady=3, fill=X)
 
     def show_profile(self):
@@ -62,6 +66,15 @@ class PostFrame(Labelframe):
         from models import Post
         Post.delete_by_id(self.post_id)
         self.destroy()
+
+    def edit(self):
+        d = EditPostDialog(self.post_id)
+        d.bind('<Destroy>', self.update, add=True)
+
+    def update(self, *args):
+        from models import Post
+        post = Post.get_by_id(self.post_id)
+        self.content.set(post.content)
 
 
 class NewPostDialog(Toplevel):
@@ -91,6 +104,34 @@ class NewPostDialog(Toplevel):
         post.save()
         self.destroy()
 
+class EditPostDialog(Toplevel):
+    def __init__(self, post_id):
+        super().__init__(title='Edit Post', topmost=True)
+        
+        from models import Post
+        self.post = Post.select().where(Post.id == post_id).get()
+
+        self.geometry('300x200')
+        self.rowconfigure(1, weight=1)
+        self.columnconfigure(0, weight=1)
+
+        self.lbl = Label(self, text='Edit post:')
+        self.lbl.grid(row=0, column=0, sticky=W)
+
+        self.fld = Text(self)
+        self.fld.grid(row=1, column=0, columnspan=2, sticky=(N, W, E, S))
+        self.fld.insert('1.0', self.post.content)
+
+        self.post_btn = Button(self, text='Save', command=self.commit)
+        self.post_btn.grid(row=2, column=1, sticky=E)
+
+        for child in self.winfo_children():
+            child.grid_configure(padx=5, pady=5)
+
+    def commit(self):
+        self.post.content = self.fld.get('1.0', END)
+        self.post.save()
+        self.destroy()
 
 class AddUserDialog(Toplevel):
     def __init__(self):
